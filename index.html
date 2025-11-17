@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренировка 1000 слов (EN/RU)</title> <!-- Подключаем Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            /* Мягкий градиентный фон */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .card-container {
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .main-card {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        /* Custom styles based on the sketch for mode buttons */
+        .mode-button {
+            transition: all 0.2s ease-in-out;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid #3b82f6;
+            /* Blue border */
+            color: #3b82f6;
+        }
+
+        .mode-button-active {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .mode-button:hover:not(.mode-button-active) {
+            background-color: #eff6ff;
+            /* Light hover */
+        }
+
+        .input-style {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e5e7eb;
+            transition: border-color 0.2s;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .input-style:focus {
+            outline: none;
+            border-color: #f59e0b;
+            /* Amber focus */
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            transition: transform 0.1s;
+        }
+
+        .action-btn:hover:enabled {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card-container"> <!-- 1. Настройки и Кнопка "Начать" -->
+        <div id="settingsCard" class="main-card mb-8 p-6 shadow-xl rounded-2xl bg-white">
+            <h1 class="text-3xl font-extrabold text-blue-800 mb-2 text-center"> Тренировка слов </h1>
+            <p class="text-sm text-gray-600 mb-6 text-center border-b pb-4 border-gray-200"> Словарь включает 1000 самых
+                популярных английских слов для быстрого старта! </p>
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-3 text-center"> Выберите направление перевода: </h3>
+                <div class="flex justify-center gap-4"> <button type="button" id="modeEnRuBtn"
+                        class="mode-button px-6 py-3 rounded-xl transition duration-300" data-mode="en-ru"> ENG → РУС
+                    </button> <button type="button" id="modeRuEnBtn"
+                        class="mode-button px-6 py-3 rounded-xl mode-button-active transition duration-300"
+                        data-mode="ru-en"> РУС → ENG </button> </div>
+            </div>
+            <div class="flex flex-col items-center gap-6">
+                <div
+                    class="flex items-center gap-3 bg-blue-50 p-4 rounded-xl w-full justify-center border border-blue-200">
+                    <label for="countSelect" class="text-blue-700 font-bold whitespace-nowrap"> Количество слов в сете:
+                    </label> <select id="countSelect"
+                        class="form-select bg-white border border-blue-300 rounded-lg p-2 text-base shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+                        <option value="25">25</option>
+                        <option value="50" selected="">50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                    </select> </div> <button id="startBtn"
+                    class="action-btn bg-green-600 text-white hover:bg-green-700 w-full py-3 rounded-xl text-lg font-bold shadow-lg transform hover:scale-[1.01] transition duration-300 ease-in-out">
+                    Начать Тренировку </button>
+            </div>
+        </div> <!-- 2. Игровой процесс (Скрыт по умолчанию) -->
+        <div id="gameCard" class="main-card d-none hidden"> <!-- Прогресс и Счет -->
+            <div class="flex justify-between items-center mb-6">
+                <div class="text-sm font-semibold text-gray-500"> Счет: <span id="score" class="text-green-600">0</span>
+                </div>
+                <div id="progress" class="text-lg font-extrabold text-blue-600 bg-blue-100 px-4 py-1 rounded-full"> 0 /
+                    0 </div>
+            </div> <!-- Слово для перевода -->
+            <div class="text-center mb-8">
+                <h1 id="prompt" class="text-4xl font-extrabold text-gray-900 break-words">Word</h1>
+            </div> <!-- Поле для ответа -->
+            <div class="text-center mb-6"> <input type="text" class="input-style w-full" id="answerInput"
+                    placeholder="слово" autocomplete="off" autofocus> </div> <!-- Кнопки (Показать / Далее) -->
+            <div class="flex justify-center gap-4"> <button id="revealBtn"
+                    class="action-btn bg-amber-500 text-white hover:bg-amber-600 hidden" title="Горячая клавиша: Ctrl">
+                    Перевод (Ctrl) </button> <button id="nextBtn"
+                    class="action-btn bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50" disabled
+                    title="Горячая клавиша: Enter"> Далее (Enter) </button> <button id="homeBtn"
+                    class="action-btn bg-gray-200 text-gray-800 hover:bg-gray-300"> Вернуться на главную </button>
+            </div>
+            <div class="mt-6">
+                <div id="feedback" class="font-medium">
+                    <div id="feedbackCard"
+                        class="rounded-xl border bg-amber-50 border-blue-200 text-blue-800 p-4 h-24 flex items-center justify-center">
+                        <div id="feedbackBody" class="text-sm">Результат</div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- 3. Результаты (Скрыт по умолчанию) -->
+        <div id="resultCard" class="main-card d-none hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">🎉 Тренировка завершена!</h2>
+            <p class="text-lg text-gray-600 mb-2 text-center">Вы угадали:</p>
+            <p class="text-5xl font-extrabold text-green-600 mb-4 text-center"> <strong id="finalCorrect">0</strong> /
+                <strong id="finalTotal" class="text-gray-800">0</strong> </p>
+            <div class="text-xl font-semibold text-blue-500 mb-6 text-center" id="accuracy"></div>
+            <div class="text-center"> <button id="restartBtn"
+                    class="action-btn bg-green-500 text-white hover:bg-green-600 mb-4"> Начать новую тренировку </button>
+                <button id="homeBtn2" class="action-btn bg-gray-200 text-gray-800 hover:bg-gray-300 ml-3"> Вернуться на
+                    главную </button> </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
