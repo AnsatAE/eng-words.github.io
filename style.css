@@ -67,8 +67,8 @@ body {
         /* Цвета карточек, как на макете */
         .card-top-100 { background-color: #8b5cf6; } /* Purple */
         .card-1000 { background-color: #06b6d4; } /* Cyan */
-        .card-2000 { background-color: #10b981; } /* Emerald */
-        .card-3000 { background-color: #f59e0b; } /* Amber */
+        .card-5000 { background-color: #10b981; } /* Emerald */
+        .card-10000 { background-color: #f59e0b; } /* Amber */
 
 
         /* Остальные стили для игрового процесса */
