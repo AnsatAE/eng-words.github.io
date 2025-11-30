@@ -1,0 +1,131 @@
+body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            /* Мягкий градиентный фон */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .card-container {
+            max-width: 600px; /* Увеличил максимальную ширину для карточек */
+            width: 100%;
+        }
+
+        .main-card {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        /* Custom styles based on the sketch for mode buttons */
+        .mode-button {
+            transition: all 0.2s ease-in-out;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 3px solid #3b82f6;
+            /* Blue border */
+            color: #3b82f6;
+        }
+
+        .mode-button-active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .mode-button:hover:not(.mode-button-active) {
+            background-color: #eff6ff;
+            /* Light hover */
+        }
+
+        /* Стили для карточек выбора объема */
+        .volume-card {
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent; /* Для активного состояния */
+        }
+
+        .volume-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .volume-card.selected {
+            border-color: #e5f50b; /* Оранжевая рамка для выбранной карточки */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        
+        /* Цвета карточек, как на макете */
+        .card-top-100 { background-color: #8b5cf6; } /* Purple */
+        .card-1000 { background-color: #06b6d4; } /* Cyan */
+        .card-2000 { background-color: #10b981; } /* Emerald */
+        .card-3000 { background-color: #f59e0b; } /* Amber */
+
+
+        /* Остальные стили для игрового процесса */
+        .input-style {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e5e7eb;
+            transition: border-color 0.2s;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .input-style:focus {
+            outline: none;
+            border-color: #f59e0b;
+            /* Amber focus */
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            transition: transform 0.1s;
+        }
+
+        .action-btn:hover:enabled {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 480px) {
+            .mode-button {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.9rem;
+                letter-spacing: 0.04em;
+                border-width: 2px;
+            }
+            .action-btn {
+                font-size: 0.6rem;
+                padding: 0.6rem 1rem;
+            }
+            #startBtn {
+                font-size: 1rem;
+            }
+            #prompt .text-muted {
+                font-size: 1rem;
+            }
+            /* Адаптация для карточек на маленьких экранах */
+            .volume-card {
+                padding: 0.75rem;
+            }
+            .volume-card h4 {
+                font-size: 1.1rem;
+            }
+        }

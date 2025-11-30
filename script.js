@@ -6,6 +6,9 @@
     const modeRuEnBtn = document.getElementById('modeRuEnBtn');
     const startBtn = document.getElementById('startBtn');
     const countSelect = document.getElementById('countSelect');
+    // Volume selection cards
+    const volumeCardsContainer = document.getElementById('volumeCards');
+    let volumeCards = document.querySelectorAll('.volume-card');
 
     const settingsCard = document.getElementById('settingsCard');
     const gameCard = document.getElementById('gameCard');
@@ -31,6 +34,7 @@
     let allWords = [];
 
     let mode = 'en-ru';
+    let selectedVolume = '100'; // default selected card
     let queue = [];
     let total = 0;
     let index = 0;
@@ -267,11 +271,13 @@
         accuracyEl.textContent = `Точность: ${acc}%`;
     }
 
-    function startGame() {
+    async function startGame() {
         setModeFromUI();
         const count = Number(countSelect.value) || 50;
+        // Load words for selected volume; fallback to embedded sample if still empty
+        await loadWords(selectedVolume);
         if (!allWords.length) {
-            alert('Список слов не загружен. Использую встроенный небольшой набор. Для загрузки words.json откройте проект через локальный сервер.');
+            alert('Список слов не загружен. Использую встроенный небольшой набор. Для загрузки слов откройте проект через локальный сервер.');
         }
         const chosen = pickNRandom(allWords.length ? allWords : defaultEmbeddedWords, count);
 
@@ -292,7 +298,29 @@
         showItem();
     }
 
-    function loadWords() {
+    function loadWords(volume) {
+        // Try a set of filename candidates depending on selected volume
+        const v = String(volume || '').trim();
+        const candidates = [];
+        if (v) {
+            // common patterns
+            candidates.push(`words-${v}.json`);
+            candidates.push(`top-${v}.json`);
+        }
+        // generic fallback
+        candidates.push('words.json');
+
+        function fetchFirst(urls) {
+            if (!urls.length) return Promise.reject(new Error('No sources'));
+            const [head, ...rest] = urls;
+            return fetch(head, { cache: 'no-store' })
+                .then(r => {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .catch(() => fetchFirst(rest));
+        }
+
         function splitMany(v) {
             if (v == null) return [];
             if (Array.isArray(v)) return v;
@@ -303,11 +331,7 @@
                 .filter(Boolean);
         }
 
-        return fetch('words.json', { cache: 'no-store' })
-            .then(r => {
-                if (!r.ok) throw new Error('HTTP ' + r.status);
-                return r.json();
-            })
+        return fetchFirst(candidates)
             .then(json => {
                 if (!Array.isArray(json)) throw new Error('Invalid words.json format');
                 allWords = json
@@ -367,6 +391,32 @@
 
     // Events
     startBtn.addEventListener('click', startGame);
+    // Volume cards select/deselect via event delegation
+    if (volumeCardsContainer) {
+        // initialize selection from DOM or default to the first card
+        volumeCards = volumeCardsContainer.querySelectorAll('.volume-card');
+        let anySelected = false;
+        volumeCards.forEach(card => {
+            if (card.classList.contains('selected')) {
+                selectedVolume = card.getAttribute('data-volume') || selectedVolume;
+                anySelected = true;
+            }
+        });
+        if (!anySelected && volumeCards.length) {
+            volumeCards[0].classList.add('selected');
+            selectedVolume = volumeCards[0].getAttribute('data-volume') || selectedVolume;
+        }
+
+        volumeCardsContainer.addEventListener('click', (e) => {
+            const card = e.target.closest('.volume-card');
+            if (!card || !volumeCardsContainer.contains(card)) return;
+            // update node list in case of dynamic changes
+            volumeCards = volumeCardsContainer.querySelectorAll('.volume-card');
+            volumeCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedVolume = card.getAttribute('data-volume') || selectedVolume;
+        });
+    }
     revealBtn.addEventListener('click', () => {
         const item = currentItem();
         if (!item) return;
@@ -441,5 +491,5 @@
 
     // init
     applyModeButtons();
-    loadWords();
+    // defer loading until user presses Start, so it matches selected volume
 })();
